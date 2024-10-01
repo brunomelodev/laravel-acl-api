@@ -3,11 +3,11 @@ services:
   app:
     build:
       args:
-        user: brunomelodev
+        user: bruno
         uid: 1000
       context: ./
       dockerfile: Dockerfile
-    image: brunomelodev/laravel-app
+    image: bruno/laravel-app
     working_dir: /var/www/
     volumes:
       - ./:/var/www/
@@ -33,9 +33,9 @@ services:
   # db
   mysql:
     image: mysql:8.0
-    restart: always
+    #restart: always
     ports:
-      - 3307:3306
+      - 3306:3306
     volumes:
       - ./.docker/mysql:/var/lib/mysql
     environment:
