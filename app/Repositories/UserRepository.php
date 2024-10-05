@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\DTO\Users\CreateUserDTO;
+use App\DTO\Users\EditUserDTO;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -10,7 +11,7 @@ class UserRepository
 {
     public function __construct(protected User $user) {}
 
-    public function getPaginate(int $totalPerPage = 15, int $page = 1,string $filter = ''): LengthAwarePaginator
+    public function getPaginate(int $totalPerPage = 15, int $page = 1, string $filter = ''): LengthAwarePaginator
     {
         return $this->user->where(function ($query) use ($filter) {
             if ($filter !== '') {
@@ -21,6 +22,35 @@ class UserRepository
 
     public function createNew(CreateUserDTO $dto): User
     {
-        return $this->user->create((array) $dto); 
+        return $this->user->create((array) $dto);
+    }
+
+    public function findById(string $id): ?User //passa um user ou sem
+    {
+        return $this->user->find($id);
+    }
+
+    public function update(EditUserDTO $dto): bool
+    {
+        if (!$user = $this->findById($dto->id)) {
+            return false;
+        }
+
+        $data = (array) $dto;
+        unset($data['password']);
+        if ($dto->password !== null) {
+            $data['password'] = bcrypt($dto->password);
+        }
+
+        return $user->update($data);
+    }
+
+    public function delete(string $id): bool
+    {
+        if (!$user = $this->findById($id)) {
+            return false;
+        }
+
+        return $user->delete();
     }
 }
