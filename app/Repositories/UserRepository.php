@@ -22,7 +22,9 @@ class UserRepository
 
     public function createNew(CreateUserDTO $dto): User
     {
-        return $this->user->create((array) $dto);
+        $data = (array) $dto;
+        $data['password'] = bcrypt($data['password']);
+        return $this->user->create($data);
     }
 
     public function findById(string $id): ?User //passa um user ou sem
